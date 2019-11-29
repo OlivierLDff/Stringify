@@ -10,7 +10,7 @@
 
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
-# DEPENDANCIES
+# DEPENDENCIES
 
 set(QSUPERMACROS_REPOSITORY "https://github.com/OlivierLDff/QSuperMacros" CACHE STRING "Repository of QSuperMacros")
 set(QSUPERMACROS_TAG "master" CACHE STRING "Git tag/branch of QSuperMacros")
