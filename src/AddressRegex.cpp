@@ -165,6 +165,8 @@ bool AddressRegex::isIpv6(const QString& subject)
 
 bool AddressRegex::getIpv6(const QString& subject, quint8* address)
 {
+    if (!address)
+        return false;
     if (!isIpv6(subject))
         return false;
 
@@ -236,6 +238,8 @@ bool AddressRegex::getIpv6(const QString& subject, quint8* address)
 
 bool AddressRegex::getMacAddress(const QString& subject, quint8* mac)
 {
+    if (!mac)
+        return false;
     static const QRegularExpression re(QStringLiteral(
             "^([0-9a-fA-F][0-9a-fA-F])(?>:)"
             "([0-9a-fA-F][0-9a-fA-F])(?>:)"
@@ -274,12 +278,14 @@ bool AddressRegex::getMacAddress(const QString& subject, quint8* mac)
 
 QString AddressRegex::macAddressToString(const quint8* mac)
 {
+    if (!mac)
+        return QStringLiteral("00:00:00:00:00:00");
     QString res;
     for (auto i = 0; i < 5; ++i)
     {
-        res += QString::number(mac[i]).rightJustified(2);
+        res += QString::number(mac[i]).rightJustified(2, QChar('0'));
         res += QStringLiteral(":");
     }
-    res += QString::number(mac[5]).rightJustified(2);
+    res += QString::number(mac[5]).rightJustified(2, QChar('0'));
     return res;
 }

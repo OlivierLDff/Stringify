@@ -1,0 +1,2 @@
+module Stringify
+singleton Ipv4RegexValidator 1.0 Ipv4RegexValidator.qml

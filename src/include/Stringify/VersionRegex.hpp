@@ -47,7 +47,7 @@ public:
      * \brief Extract version digit from a version string.
      * - 1.2.3
      * - 0.255.254
-     * \param subject Represent a version in the for 1.2.3.12A45ABC
+     * \param subject Represent a version in the for 1.2.3
      * \param major Major version in the string, between 1 to 255
      * \param minor Minor version in the string, between 1 to 255
      * \param patch Patch version in the string, between 1 to 255
@@ -55,7 +55,9 @@ public:
      */
     static bool getVersion(const QString& subject, quint8& major, quint8& minor, quint8& patch);
 
-    static QString versionToString(const quint8& major, const quint8& minor, const quint8& patch, const quint32& tag);
+    static QString fullVersionToString(const quint8& major, const quint8& minor, const quint8& patch, const quint32& tag);
+
+    static QString versionToString(const quint8& major, const quint8& minor, const quint8& patch);
 };
 STRINGIFY_NAMESPACE_END
 

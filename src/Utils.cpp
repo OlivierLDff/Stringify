@@ -48,11 +48,22 @@ static void registerTypes(const char* uri, const quint8 major, const quint8 mino
     registerTypes();
 }
 
-Q_COREAPP_STARTUP_FUNCTION(registerTypes)
+static void loadResources()
+{
+    Q_INIT_RESOURCE(Stringify);
+}
+
+Q_COREAPP_STARTUP_FUNCTION(registerTypes);
+Q_COREAPP_STARTUP_FUNCTION(loadResources);
 
 STRINGIFY_USING_NAMESPACE;
 
 void Utils::registerTypes(const char* uri, const quint8 major, const quint8 minor)
 {
     ::registerTypes(uri, major, minor);
+}
+
+void Utils::loadResources()
+{
+    ::loadResources();
 }

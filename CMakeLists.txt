@@ -102,6 +102,8 @@ message("                                                     ")
 # └──────────────────────────────────────────────────────────────────┘
 
 find_package(Qt5Core CONFIG REQUIRED)
+find_package(Qt5Quick CONFIG REQUIRED)
+find_package(Qt5QuickCompiler CONFIG REQUIRED)
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       DEPENDENCIES                               │
@@ -129,8 +131,28 @@ set(FETCHCONTENT_QUIET ON)
 FetchContent_MakeAvailable(QSuperMacros)
 
 # ┌──────────────────────────────────────────────────────────────────┐
-# │                          STRINGIFY                              │
+# │                          STRINGIFY                               │
 # └──────────────────────────────────────────────────────────────────┘
+
+# Add qml to the qtquick compiler
+qtquick_compiler_add_resources(STRINGIFY_QML_RES ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc)
+
+# Dont Run Moc on cpp file generated from cpp
+foreach(STRINGIFY_QML_FILE ${STRINGIFY_QML_RES})
+    set_property(SOURCE ${STRINGIFY_QML_FILE} PROPERTY SKIP_AUTOMOC ON)
+    source_group( "QmlMoc Files" FILES ${STRINGIFY_QML_FILE} )
+endforeach()
+
+# We use every qml file inside the IDE.
+file(GLOB_RECURSE STRINGIFY_QML_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml)
+
+# Set file in folder, good for visualization inside IDE
+foreach(_source IN ITEMS ${STRINGIFY_QML_SRCS})
+    get_filename_component(_source_path "${_source}" PATH)
+    file(RELATIVE_PATH _source_path_rel ${CMAKE_CURRENT_SOURCE_DIR}/qml "${_source_path}")
+    string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
+    source_group("Qml Files\\${_group_path}" FILES "${_source}")
+endforeach()
 
 set(STRINGIFY_SRCS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(STRINGIFY_INCS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/src/include)
@@ -149,6 +171,8 @@ set(STRINGIFY_API_SRCS
 
 set(STRINGIFY_SRCS ${STRINGIFY_UTILS_SRCS}
     ${STRINGIFY_API_SRCS}
+    ${STRINGIFY_QML_RES}
+    ${STRINGIFY_QML_SRCS}
 )
 
 set(STRINGIFY_UTILS_INCS
@@ -171,6 +195,7 @@ source_group("Utils" FILES ${STRINGIFY_UTILS_INCS})
 source_group("Utils" FILES ${STRINGIFY_UTILS_SRCS})
 source_group("Api" FILES ${STRINGIFY_API_SRCS})
 source_group("Api" FILES ${STRINGIFY_API_INCS})
+source_group("Qml" FILES ${STRINGIFY_QML_SRCS})
 
 # STRINGIFY TARGET
 if(STRINGIFY_BUILD_SHARED)
@@ -195,7 +220,8 @@ set_target_properties(${STRINGIFY_TARGET} PROPERTIES PREFIX "")
 target_link_libraries(${STRINGIFY_TARGET} ${QSUPERMACROS_TARGET})
 
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE)
-qt5_use_modules(${STRINGIFY_TARGET} Core)
+set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTORCC TRUE)
+qt5_use_modules(${STRINGIFY_TARGET} Core Quick)
 
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES FOLDER ${STRINGIFY_FOLDER_PREFIX})
 

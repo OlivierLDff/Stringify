@@ -36,7 +36,9 @@ public:
      * Registered types are:
      * -
      */
-    static void registerTypes(const char* uri, const quint8 major, const quint8 minor);
+    static void registerTypes(const char* uri = nullptr, const quint8 major = 1, const quint8 minor = 0);
+
+    static void loadResources();
 };
 
 STRINGIFY_NAMESPACE_END // __STRINGIFY_UTILS_HPP__
