@@ -87,7 +87,7 @@ QString VersionRegex::fullVersionToString(const quint8& major, const quint8& min
 {
     return QString::number(major) + QStringLiteral(".") +
         QString::number(minor) + QStringLiteral(".") +
-        QString::number(patch) + QStringLiteral(".") +
+        QString::number(patch) + QStringLiteral(".0x") +
         QString::number(tag, 16).rightJustified(8, QChar('0'));
 }
 
