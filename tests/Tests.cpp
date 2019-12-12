@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <Stringify.hpp>
+#include <QDebug>
 
 class AddressRegexTest : public ::testing::Test
 {
@@ -16,6 +17,121 @@ public:
 };
 
 STRINGIFY_USING_NAMESPACE;
+
+TEST(Ipv6ToStringTests, fullIpV6)
+{
+    quint8 ipv6[16] = {
+        0x12, 0x34, 0x56, 0x78,
+        0x9A, 0xBC, 0xDE, 0xF0,
+        0xAA, 0xBB, 0xCC, 0xDD,
+        0xEE, 0xFF, 0x11, 0x22,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    ASSERT_TRUE(QString(QStringLiteral("1234:5678:9abc:def0:aabb:ccdd:eeff:1122")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6W0)
+{
+    quint8 ipv6[16] = {
+        0x0, 0x34, 0x06, 0x78,
+        0x9A, 0xBC, 0xDE, 0xF0,
+        0xAA, 0xBB, 0xCC, 0xDD,
+        0xEE, 0xFF, 0x11, 0x22,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    ASSERT_TRUE(QString(QStringLiteral("34:678:9abc:def0:aabb:ccdd:eeff:1122")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6Full0)
+{
+    quint8 ipv6[16] = {
+        0x0, 0x0, 0x06, 0x78,
+        0x9A, 0xBC, 0xDE, 0xF0,
+        0xAA, 0xBB, 0xCC, 0xDD,
+        0xEE, 0xFF, 0x11, 0x22,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral(":678:9abc:def0:aabb:ccdd:eeff:1122")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6FullMultiple0)
+{
+    quint8 ipv6[16] = {
+        0x0, 0x0, 0x06, 0x78,
+        0x9A, 0xBC, 0xDE, 0xF0,
+        0xAA, 0xBB, 0, 0,
+        0, 0, 0x11, 0x22,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral("0:678:9abc:def0:aabb::1122")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6FullOnly0)
+{
+    quint8 ipv6[16] = {
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral("::")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6LotsOf0)
+{
+    quint8 ipv6[16] = {
+        0,0,1,2,
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral("0:102::")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6Local)
+{
+    quint8 ipv6[16] = {
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,1,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral("::1")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6LotsOf02)
+{
+    quint8 ipv6[16] = {
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,1,
+        0,0,0,0,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral("::1:0:0")) == address);
+}
+
+TEST(Ipv6ToStringTests, fullIpV6LotsOf03)
+{
+    quint8 ipv6[16] = {
+        0x10,0,0,0,
+        0,0,0,0,
+        0,0,0,1,
+        0,0,0,0,
+    };
+    QString address = AddressRegex::ipv6ToString(ipv6);
+    qDebug().noquote() << address;
+    ASSERT_TRUE(QString(QStringLiteral("1000::1:0:0")) == address);
+}
 
 TEST_F(AddressRegexTest, ipv6)
 {
