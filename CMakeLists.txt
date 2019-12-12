@@ -70,7 +70,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # LOG OPTIONS
 
-message("---------------- STRINGIFY OPTIONS. ----------------")
+message(STATUS "---------------- STRINGIFY OPTIONS. ----------------")
 
 #General
 message(STATUS "STRINGIFY_PROJECT            : " ${STRINGIFY_PROJECT})
@@ -94,8 +94,8 @@ if(STRINGIFY_ENABLE_INSTALL)
 message(STATUS "STRINGIFY_INSTALL_PREFIX     : " ${STRINGIFY_INSTALL_PREFIX})
 endif(STRINGIFY_ENABLE_INSTALL)
 
-message("---------------- DONE WITH OPTIONS. -----------------")
-message("                                                     ")
+message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
+message(STATUS "                                                     ")
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                         QT5 CMAKE                                │
@@ -134,24 +134,28 @@ FetchContent_MakeAvailable(QSuperMacros)
 # │                          STRINGIFY                               │
 # └──────────────────────────────────────────────────────────────────┘
 
+file(GLOB_RECURSE STRINGIFY_QML_SRCS qml/*.qml)
+
+foreach(SOURCE IN ITEMS ${STRINGIFY_QML_SRCS})
+    get_filename_component(SOURCE_PATH "${SOURCE}" PATH)
+    file(RELATIVE_PATH SOURCE_PATH_REL ${CMAKE_CURRENT_SOURCE_DIR}/qml "${SOURCE_PATH}")
+    string(REPLACE "/" "\\" GROUP_PATH "${SOURCE_PATH_REL}")
+    source_group("Qml\\${GROUP_PATH}" FILES "${SOURCE}")
+endforeach()
+
 # Add qml to the qtquick compiler
 qtquick_compiler_add_resources(STRINGIFY_QML_RES ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc)
 
-# Dont Run Moc on cpp file generated from cpp
-foreach(STRINGIFY_QML_FILE ${STRINGIFY_QML_RES})
-    set_property(SOURCE ${STRINGIFY_QML_FILE} PROPERTY SKIP_AUTOMOC ON)
-    source_group( "QmlMoc Files" FILES ${STRINGIFY_QML_FILE} )
-endforeach()
+# Trick to rerun cmake each time Stringify.qrc is updated
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc
+  ${CMAKE_CURRENT_BINARY_DIR}/qml.junk
+)
 
-# We use every qml file inside the IDE.
-file(GLOB_RECURSE STRINGIFY_QML_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml)
-
-# Set file in folder, good for visualization inside IDE
-foreach(_source IN ITEMS ${STRINGIFY_QML_SRCS})
-    get_filename_component(_source_path "${_source}" PATH)
-    file(RELATIVE_PATH _source_path_rel ${CMAKE_CURRENT_SOURCE_DIR}/qml "${_source_path}")
-    string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
-    source_group("Qml Files\\${_group_path}" FILES "${_source}")
+# Dont Run Moc on cpp file generated from qml
+foreach(STRINGIFY_CURRENT_QML_FILE ${STRINGIFY_QML_RES})
+    set_property(SOURCE ${STRINGIFY_CURRENT_QML_FILE} PROPERTY SKIP_AUTOMOC ON)
+    source_group("Qml\\QtQuickCompiler Files" FILES ${STRINGIFY_CURRENT_QML_FILE})
 endforeach()
 
 set(STRINGIFY_SRCS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/src)
