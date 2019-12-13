@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/Stringify">
 
-    <!-- DEBUG -->
+    <!-- API -->
     <file>qmldir</file>
     <file>Ipv4RegexValidator.qml</file>
 
