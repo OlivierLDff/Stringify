@@ -95,7 +95,6 @@ message(STATUS "STRINGIFY_INSTALL_PREFIX     : " ${STRINGIFY_INSTALL_PREFIX})
 endif(STRINGIFY_ENABLE_INSTALL)
 
 message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
-message(STATUS "                                                     ")
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                         QT5 CMAKE                                │
