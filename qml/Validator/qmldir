@@ -1,0 +1,4 @@
+module Stringify.Validator
+singleton Ipv4              1.0 Ipv4.qml
+singleton DatagramTtl       1.0 DatagramTtl.qml
+singleton SocketPort        1.0 SocketPort.qml

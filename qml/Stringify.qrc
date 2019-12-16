@@ -3,7 +3,12 @@
 
     <!-- API -->
     <file>qmldir</file>
-    <file>Ipv4RegexValidator.qml</file>
+
+    <!-- VALIDATOR -->
+    <file>Validator/qmldir</file>
+    <file>Validator/Ipv4.qml</file>
+    <file>Validator/DatagramTtl.qml</file>
+    <file>Validator/SocketPort.qml</file>
 
     </qresource>
 </RCC>
