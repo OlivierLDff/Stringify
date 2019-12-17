@@ -13,6 +13,7 @@
 
 // Application Header
 #include <Stringify/Version.hpp>
+#include <Stringify/VersionRegex.hpp>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
@@ -29,9 +30,6 @@ Version::Version(QObject* parent): QObject(parent),
     _minor(STRINGIFY_VERSION_MINOR),
     _patch(STRINGIFY_VERSION_PATCH),
     _tag(STRINGIFY_VERSION_TAG_HEX),
-    _readable(QString::number(_major) + "." +
-        QString::number(_minor) + "." +
-        QString::number(_patch) + "." +
-        QString::number(_tag, 16))
+    _readable(Stringify::VersionRegex::fullVersionToString(_major, _minor, _patch, _tag))
 {
 }
