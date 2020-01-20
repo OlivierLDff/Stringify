@@ -283,9 +283,9 @@ QString AddressRegex::macAddressToString(const quint8* mac)
     QString res;
     for (auto i = 0; i < 5; ++i)
     {
-        res += QString::number(mac[i]).rightJustified(2, QChar('0'));
+        res += QString::number(mac[i], 16).rightJustified(2, QChar('0'));
         res += QStringLiteral(":");
     }
-    res += QString::number(mac[5]).rightJustified(2, QChar('0'));
+    res += QString::number(mac[5], 16).rightJustified(2, QChar('0'));
     return res;
 }
