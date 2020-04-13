@@ -4,6 +4,11 @@
     <!-- API -->
     <file>qmldir</file>
 
+    <!-- FORMATTER -->
+    <file>Formatter/qmldir</file>
+    <file>Formatter/Data.qml</file>
+    <file>Formatter/Date.qml</file>
+
     <!-- VALIDATOR -->
     <file>Validator/qmldir</file>
     <file>Validator/Ipv4.qml</file>

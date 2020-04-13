@@ -1,0 +1,3 @@
+module Stringify.Formatter
+singleton Data              1.0 Data.qml
+singleton Date              1.0 Date.qml
