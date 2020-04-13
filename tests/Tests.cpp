@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <Stringify.hpp>
+#include <Stringify/Stringify.hpp>
 #include <QDebug>
 
 class AddressRegexTest : public ::testing::Test
