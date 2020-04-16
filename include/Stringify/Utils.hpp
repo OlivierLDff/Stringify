@@ -5,22 +5,17 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-
-// Qt Header
-
-// Dependencies Header
-
-// Application Header
+// Application Headers
 #include <Stringify/Export.hpp>
+
+// Qt Headers
+#include <QtGlobal>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_NAMESPACE_START
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -41,6 +36,6 @@ public:
     static void loadResources();
 };
 
-STRINGIFY_NAMESPACE_END // __STRINGIFY_UTILS_HPP__
+}
 
 #endif

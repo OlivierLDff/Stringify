@@ -5,23 +5,21 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
+// Application Headers
+#include <Stringify/Export.hpp>
 
-// C++ Header
+// Dependencies Headers
 
-// Qt Header
+// Qt Headers
 #include <QObject>
 
-// Dependencies Header
-
-// Application Header
-#include <Stringify/Export.hpp>
+// C++ Headers
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_NAMESPACE_START
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -58,6 +56,6 @@ public:
 };
 
 
-STRINGIFY_NAMESPACE_END
+}
 
 #endif // __STRINGIFY_TEMPLATE_HPP__

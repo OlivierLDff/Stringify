@@ -1,41 +1,64 @@
-#ifndef __STRINGIFY_ENUM_HELPER_HPP__
-#define __STRINGIFY_ENUM_HELPER_HPP__
+#ifndef __STRINGIFY_UTILS_LOGGER_HPP__
+#define __STRINGIFY_UTILS_LOGGER_HPP__
 
 // ─────────────────────────────────────────────────────────────
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-
-// Qt Header
-#include <QString>
-
-// Dependencies Header
-
-// Application Header
+// Library Headers
 #include <Stringify/Export.hpp>
+
+// Dependencies Headers
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/sink.h>
+
+// Stl Headers
+#include <memory>
+#include <set>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_NAMESPACE_START
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
 // ─────────────────────────────────────────────────────────────
 
-class EnumHelper
+/**
+ * Define static logger that library use.
+ * You need to install sink on them
+ */
+class STRINGIFY_API_ Logger
 {
+    // ─────── TYPES ─────────
 public:
-    static QString valueToStrWithHex(const QString& s, int value)
-    {
-        return s + QStringLiteral(" (0x") + QString::number(value, 16) + QStringLiteral(")");
-    }
+    using Log       = spdlog::logger;
+    using LogPtr    = std::shared_ptr<Log>;
+    using LogList   = std::set<LogPtr>;
+    using Sink      = spdlog::sinks::sink;
+    using SinkPtr   = std::shared_ptr<Sink>;
+
+    // ─────── LOGGERS NAME ─────────
+public:
+    static const char* const UTILS_NAME;
+
+    // ─────── LOGGERS ─────────
+public:
+    static const LogPtr UTILS;
+
+    // ─────── LIST OF ALL LOGGERS ─────────
+public:
+    // Loggers
+    static const LogList LOGGERS;
+
+    // ─────── API ─────────
+public:
+    static void registerSink(const SinkPtr& sink);
+    static void unRegisterSink(const SinkPtr& sink);
 };
 
-STRINGIFY_NAMESPACE_END
+}
 
 #endif

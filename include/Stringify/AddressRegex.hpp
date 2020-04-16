@@ -5,23 +5,18 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-
-// Qt Header
-#include <QString>
-
-// Dependencies Header
-
-// Application Header
+// Application Headers
 #include <Stringify/Export.hpp>
+
+// Qt Headers
+#include <QtGlobal>
+#include <QString>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_NAMESPACE_START
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -39,6 +34,6 @@ public:
     static QString macAddressToString(const quint8* mac);
 };
 
-STRINGIFY_NAMESPACE_END
+}
 
-#endif // __STRINGIFY_ADDRESSREGEX_HPP__
+#endif

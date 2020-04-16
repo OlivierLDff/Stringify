@@ -5,23 +5,18 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-
-// Qt Header
-#include <QObject>
-
-// Dependencies Header
-
-// Application Header
+// Application Headers
 #include <Stringify/Export.hpp>
+
+// Qt Headers
+#include <QtGlobal>
+#include <QString>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_NAMESPACE_START
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -59,6 +54,6 @@ public:
 
     static QString versionToString(const quint8& major, const quint8& minor, const quint8& patch);
 };
-STRINGIFY_NAMESPACE_END
+}
 
-#endif // __STRINGIFY_VERSION_REGEX_HPP__
+#endif

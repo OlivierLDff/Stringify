@@ -4,7 +4,7 @@
  */
 
 // Qt
-import QtQuick 2.13
+import QtQuick 2.12
 
 pragma Singleton
 

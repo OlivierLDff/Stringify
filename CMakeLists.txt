@@ -8,12 +8,12 @@
 # │                       CMAKE PROPERTIES                           │
 # └──────────────────────────────────────────────────────────────────┘
 
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # DEPENDENCIES
 
-set(QSUPERMACROS_REPOSITORY "https://github.com/OlivierLDff/QSuperMacros" CACHE STRING "Repository of QSuperMacros")
-set(QSUPERMACROS_TAG "master" CACHE STRING "Git tag/branch of QSuperMacros")
+set(SPDLOG_REPOSITORY "https://github.com/gabime/spdlog" CACHE STRING "Repository of spdlog")
+set(SPDLOG_TAG "v1.x" CACHE STRING "Git tag/branch of spdlog")
 
 set(GTEST_REPOSITORY "https://github.com/google/googletest" CACHE STRING "Repository of googletest")
 set(GTEST_TAG "master" CACHE STRING "Git tag/branch of googletest")
@@ -25,7 +25,7 @@ set(GTEST_TAG "master" CACHE STRING "Git tag/branch of googletest")
 # OPTIONS
 
 set(STRINGIFY_VERSION_MAJOR 1)
-set(STRINGIFY_VERSION_MINOR 0)
+set(STRINGIFY_VERSION_MINOR 1)
 set(STRINGIFY_VERSION_PATCH 0)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     EXECUTE_PROCESS(
@@ -49,16 +49,9 @@ set(STRINGIFY_VERSION ${STRINGIFY_VERSION_MAJOR}.${STRINGIFY_VERSION_MINOR}.${ST
 set(STRINGIFY_BUILD_SHARED OFF CACHE BOOL "Build as a shared library (ON) or as static (OFF)")
 set(STRINGIFY_FOLDER_PREFIX ${STRINGIFY_PROJECT} CACHE STRING "Prefix folder for all Stringify generated targets in generated project (only decorative)")
 
-set(STRINGIFY_USE_NAMESPACE ON CACHE BOOL "Should we use namespace")
-set(STRINGIFY_NAMESPACE ${STRINGIFY_PROJECT} CACHE STRING "Namespace for the library")
-
 # Tests
-set(STRINGIFY_ENABLE_TESTS ON CACHE BOOL "Create or not a target for test (compatible with CTests)")
+set(STRINGIFY_ENABLE_TESTS OFF CACHE BOOL "Create or not a target for test (compatible with CTests)")
 set(STRINGIFY_TESTS_PREFIX ${STRINGIFY_PROJECT} CACHE STRING "Prefix for all Stringify tests")
-
-# Install
-set(STRINGIFY_ENABLE_INSTALL OFF CACHE BOOL "Create or not a target for install")
-set(STRINGIFY_INSTALL_PREFIX ${STRINGIFY_PROJECT} CACHE STRING "Prefix for all Stringify headers in the install folder")
 
 # CREATE PROJECT
 
@@ -83,34 +76,24 @@ if(STRINGIFY_ENABLE_TESTS)
 message(STATUS "STRINGIFY_TESTS_PREFIX       : " ${STRINGIFY_TESTS_PREFIX})
 endif(STRINGIFY_ENABLE_TESTS)
 
-# Install
-message(STATUS "STRINGIFY_ENABLE_INSTALL     : " ${STRINGIFY_ENABLE_INSTALL})
-if(STRINGIFY_ENABLE_INSTALL)
-message(STATUS "STRINGIFY_INSTALL_PREFIX     : " ${STRINGIFY_INSTALL_PREFIX})
-endif(STRINGIFY_ENABLE_INSTALL)
-
 message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                         QT5 CMAKE                                │
 # └──────────────────────────────────────────────────────────────────┘
 
-find_package(Qt5Core CONFIG REQUIRED)
-find_package(Qt5Quick CONFIG REQUIRED)
-find_package(Qt5QuickCompiler CONFIG REQUIRED)
+find_package(Qt5Core            CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
+find_package(Qt5Qml             CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
+
+find_package(Qt5Gui             CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
+find_package(Qt5Quick           CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
+find_package(Qt5QuickCompiler   CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       DEPENDENCIES                               │
 # └──────────────────────────────────────────────────────────────────┘
 
 include(FetchContent)
-
-# QSuperMacros
-FetchContent_Declare(
-    QSuperMacros
-    GIT_REPOSITORY ${QSUPERMACROS_REPOSITORY}
-    GIT_TAG        ${QSUPERMACROS_TAG}
-)
 
 # googletest
 FetchContent_Declare(
@@ -119,10 +102,14 @@ FetchContent_Declare(
     GIT_TAG        ${GTEST_TAG}
 )
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-set(FETCHCONTENT_QUIET ON)
+# spdlog
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY ${SPDLOG_REPOSITORY}
+    GIT_TAG        ${SPDLOG_TAG}
+)
 
-FetchContent_MakeAvailable(QSuperMacros)
+FetchContent_MakeAvailable(spdlog)
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                          STRINGIFY                               │
@@ -160,6 +147,7 @@ set(STRINGIFY_PRIVATE_INCS_FOLDER ${STRINGIFY_INCS_FOLDER}/Stringify)
 set(STRINGIFY_UTILS_SRCS
     ${STRINGIFY_SRCS_FOLDER}/Utils.cpp
     ${STRINGIFY_SRCS_FOLDER}/Version.cpp
+    ${STRINGIFY_SRCS_FOLDER}/Logger.cpp
 )
 
 set(STRINGIFY_API_SRCS
@@ -178,12 +166,12 @@ set(STRINGIFY_UTILS_INCS
     ${STRINGIFY_PRIVATE_INCS_FOLDER}/Export.hpp
     ${STRINGIFY_PRIVATE_INCS_FOLDER}/Utils.hpp
     ${STRINGIFY_PRIVATE_INCS_FOLDER}/Version.hpp
+    ${STRINGIFY_PRIVATE_INCS_FOLDER}/Logger.hpp
 )
 
 set(STRINGIFY_API_INCS
     ${STRINGIFY_PRIVATE_INCS_FOLDER}/VersionRegex.hpp
     ${STRINGIFY_PRIVATE_INCS_FOLDER}/AddressRegex.hpp
-    ${STRINGIFY_PRIVATE_INCS_FOLDER}/EnumHelper.hpp
 )
 
 set(STRINGIFY_INCS ${STRINGIFY_UTILS_INCS}
@@ -218,11 +206,11 @@ target_include_directories(${STRINGIFY_TARGET} PUBLIC $<BUILD_INTERFACE:${STRING
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES PREFIX "")
 
 # Link libraries
-target_link_libraries(${STRINGIFY_TARGET} ${QSUPERMACROS_TARGET})
+target_link_libraries(${STRINGIFY_TARGET} spdlog)
 
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE)
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTORCC TRUE)
-qt5_use_modules(${STRINGIFY_TARGET} Core Quick)
+qt5_use_modules(${STRINGIFY_TARGET} Core Gui Qml Quick)
 
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES FOLDER ${STRINGIFY_FOLDER_PREFIX})
 
@@ -233,23 +221,11 @@ target_compile_definitions(${STRINGIFY_TARGET} PRIVATE -DSTRINGIFY_VERSION_PATCH
 target_compile_definitions(${STRINGIFY_TARGET} PRIVATE -DSTRINGIFY_VERSION_TAG=${STRINGIFY_VERSION_TAG})
 target_compile_definitions(${STRINGIFY_TARGET} PRIVATE -DSTRINGIFY_VERSION_TAG_HEX=${STRINGIFY_VERSION_TAG_HEX})
 
-if(STRINGIFY_USE_NAMESPACE)
-    target_compile_definitions(${STRINGIFY_TARGET} PUBLIC -DSTRINGIFY_USE_NAMESPACE)
-    target_compile_definitions(${STRINGIFY_TARGET} PUBLIC -DSTRINGIFY_NAMESPACE=${STRINGIFY_NAMESPACE})
-endif(STRINGIFY_USE_NAMESPACE)
-
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                           TESTS                                  │
 # └──────────────────────────────────────────────────────────────────┘
 
 if(STRINGIFY_ENABLE_TESTS)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/CTestLists.txt)
-endif(STRINGIFY_ENABLE_TESTS)
-
-# ┌──────────────────────────────────────────────────────────────────┐
-# │                         INSTALL                                  │
-# └──────────────────────────────────────────────────────────────────┘
-
-if(STRINGIFY_ENABLE_INSTALL)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/CInstallLists.txt)
-endif(STRINGIFY_ENABLE_INSTALL)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

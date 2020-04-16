@@ -2,23 +2,17 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-
-// Qt Header
-#include <QRegularExpression>
-
-// Dependencies Header
-
-// Application Header
+// Application Headers
 #include <Stringify/VersionRegex.hpp>
+
+// Qt Headers
+#include <QRegularExpression>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_USING_NAMESPACE;
+using namespace stringify;
 
 // ─────────────────────────────────────────────────────────────
 //                  FUNCTIONS

@@ -2,23 +2,18 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
+// Application Headers
+#include <Stringify/AddressRegex.hpp>
 
-// C++ Header
-
-// Qt Header
+// Qt Headers
 #include <QRegularExpression>
 
-// Dependencies Header
-
-// Application Header
-#include <Stringify/AddressRegex.hpp>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-STRINGIFY_USING_NAMESPACE;
+using namespace stringify;
 
 // ─────────────────────────────────────────────────────────────
 //                  FUNCTIONS

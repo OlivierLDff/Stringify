@@ -16,7 +16,7 @@ protected:
 public:
 };
 
-STRINGIFY_USING_NAMESPACE;
+using namespace stringify;
 
 TEST(Ipv6ToStringTests, fullIpV6)
 {
