@@ -9,7 +9,7 @@
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-using namespace stringify;
+using namespace Stringify;
 
 template<typename... Args>
 static Logger::LogPtr makeLog(Args&&... args) { return std::make_shared<Logger::Log>(std::forward<Args>(args)...); }

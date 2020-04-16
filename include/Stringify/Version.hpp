@@ -34,7 +34,7 @@
         } \
 private:
 
-namespace stringify {
+namespace Stringify {
 
 class STRINGIFY_API_ Version : public QObject
 {

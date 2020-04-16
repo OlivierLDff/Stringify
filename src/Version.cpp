@@ -9,7 +9,7 @@
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-using namespace stringify;
+using namespace Stringify;
 
 // ─────────────────────────────────────────────────────────────
 //                  FUNCTIONS

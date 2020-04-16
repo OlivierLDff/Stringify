@@ -17,31 +17,31 @@
 #ifdef NDEBUG
 # define LOG_DEV_DEBUG(str, ...) do {} while (0)
 #else
-# define LOG_DEV_DEBUG(str, ...) stringify::Logger::UTILS->debug( str, ## __VA_ARGS__ );
+# define LOG_DEV_DEBUG(str, ...) Stringify::Logger::UTILS->debug( str, ## __VA_ARGS__ );
 #endif
 
 #ifdef NDEBUG
 # define LOG_DEV_INFO(str, ...)  do {} while (0)
 #else
-# define LOG_DEV_INFO(str, ...)  stringify::Logger::UTILS->info(  str, ## __VA_ARGS__ );
+# define LOG_DEV_INFO(str, ...)  Stringify::Logger::UTILS->info(  str, ## __VA_ARGS__ );
 #endif
 
 #ifdef NDEBUG
 # define LOG_DEV_WARN(str, ...)  do {} while (0)
 #else
-# define LOG_DEV_WARN(str, ...)  stringify::Logger::UTILS->warn(  str, ## __VA_ARGS__ );
+# define LOG_DEV_WARN(str, ...)  Stringify::Logger::UTILS->warn(  str, ## __VA_ARGS__ );
 #endif
 
 #ifdef NDEBUG
 # define LOG_DEV_ERR(str, ...)   do {} while (0)
 #else
-# define LOG_DEV_ERR(str, ...)   stringify::Logger::UTILS->error( str, ## __VA_ARGS__ );
+# define LOG_DEV_ERR(str, ...)   Stringify::Logger::UTILS->error( str, ## __VA_ARGS__ );
 #endif
 
-#define LOG_DEBUG(str, ...)      stringify::Logger::UTILS->debug( str, ## __VA_ARGS__ );
-#define LOG_INFO(str, ...)       stringify::Logger::UTILS->info(  str, ## __VA_ARGS__ );
-#define LOG_WARN(str, ...)       stringify::Logger::UTILS->warn(  str, ## __VA_ARGS__ );
-#define LOG_ERR(str, ...)        stringify::Logger::UTILS->error( str, ## __VA_ARGS__ );
+#define LOG_DEBUG(str, ...)      Stringify::Logger::UTILS->debug( str, ## __VA_ARGS__ );
+#define LOG_INFO(str, ...)       Stringify::Logger::UTILS->info(  str, ## __VA_ARGS__ );
+#define LOG_WARN(str, ...)       Stringify::Logger::UTILS->warn(  str, ## __VA_ARGS__ );
+#define LOG_ERR(str, ...)        Stringify::Logger::UTILS->error( str, ## __VA_ARGS__ );
 
 // ─────────────────────────────────────────────────────────────
 //                  FUNCTIONS
@@ -54,10 +54,10 @@ static quint8 _minor = 0;
 
 static void Stringify_registerTypes()
 {
-    LOG_DEV_INFO("Register Stringify v{}", stringify::Version::version().readable().toStdString());
+    LOG_DEV_INFO("Register Stringify v{}", Stringify::Version::version().readable().toStdString());
 
     LOG_DEV_INFO("Register Singleton {}.Version {}.{} to QML", *_uri, _major, _minor);
-	stringify::Version::registerSingleton(*_uri, _major, _minor);
+	Stringify::Version::registerSingleton(*_uri, _major, _minor);
 }
 
 static void Stringify_registerTypes(const char* uri, const quint8 major, const quint8 minor)
@@ -71,7 +71,7 @@ static void Stringify_registerTypes(const char* uri, const quint8 major, const q
 
 static void Stringify_loadResources()
 {
-    LOG_DEV_INFO("Load Stringify.qrc v{}", stringify::Version::version().readable().toStdString());
+    LOG_DEV_INFO("Load Stringify.qrc v{}", Stringify::Version::version().readable().toStdString());
     Q_INIT_RESOURCE(Stringify);
 }
 
@@ -80,7 +80,7 @@ Q_COREAPP_STARTUP_FUNCTION(Stringify_registerTypes);
 Q_COREAPP_STARTUP_FUNCTION(Stringify_loadResources);
 #endif
 
-using namespace stringify;
+using namespace Stringify;
 
 void Utils::registerTypes(const char* uri, const quint8 major, const quint8 minor)
 {

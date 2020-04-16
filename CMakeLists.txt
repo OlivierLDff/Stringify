@@ -202,9 +202,6 @@ target_compile_features(${STRINGIFY_TARGET} PUBLIC cxx_std_11)
 # Set include directory
 target_include_directories(${STRINGIFY_TARGET} PUBLIC $<BUILD_INTERFACE:${STRINGIFY_INCS_FOLDER}> $<INSTALL_INTERFACE:${STRINGIFY_INSTALL_PREFIX}>)
 
-# Avoid libstringify on darwin for example.
-set_target_properties(${STRINGIFY_TARGET} PROPERTIES PREFIX "")
-
 # Link libraries
 target_link_libraries(${STRINGIFY_TARGET} spdlog)
 
