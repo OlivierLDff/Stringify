@@ -16,7 +16,7 @@ protected:
 public:
 };
 
-using namespace Stringify;
+using namespace stringify;
 
 TEST(Ipv6ToStringTests, fullIpV6)
 {

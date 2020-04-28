@@ -15,7 +15,7 @@
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-namespace Stringify {
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -31,7 +31,8 @@ public:
      * Registered types are:
      * -
      */
-    static void registerTypes(const char* uri = nullptr, const quint8 major = 1, const quint8 minor = 0);
+    static void registerTypes(
+        const char* uri = nullptr, const quint8 major = 1, const quint8 minor = 0);
 
     static void loadResources();
 };

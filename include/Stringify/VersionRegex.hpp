@@ -16,7 +16,7 @@
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-namespace Stringify {
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -36,7 +36,8 @@ public:
      * \param tag Git tag in hex, can be with a 0x prefix. (which will be ignored)
      * \return true if the string could have been parsed and every subitem were parsed correctly
      */
-    static bool getFullVersion(const QString& subject, quint8& major, quint8& minor, quint8& patch, quint32& tag);
+    static bool getFullVersion(
+        const QString& subject, quint8& major, quint8& minor, quint8& patch, quint32& tag);
 
     /**
      * \brief Extract version digit from a version string.
@@ -50,7 +51,8 @@ public:
      */
     static bool getVersion(const QString& subject, quint8& major, quint8& minor, quint8& patch);
 
-    static QString fullVersionToString(const quint8& major, const quint8& minor, const quint8& patch, const quint32& tag);
+    static QString fullVersionToString(
+        const quint8& major, const quint8& minor, const quint8& patch, const quint32& tag);
 
     static QString versionToString(const quint8& major, const quint8& minor, const quint8& patch);
 };

@@ -20,7 +20,7 @@
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-namespace Stringify {
+namespace stringify {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
@@ -34,11 +34,11 @@ class STRINGIFY_API_ Logger
 {
     // ─────── TYPES ─────────
 public:
-    using Log       = spdlog::logger;
-    using LogPtr    = std::shared_ptr<Log>;
-    using LogList   = std::set<LogPtr>;
-    using Sink      = spdlog::sinks::sink;
-    using SinkPtr   = std::shared_ptr<Sink>;
+    using Log = spdlog::logger;
+    using LogPtr = std::shared_ptr<Log>;
+    using LogList = std::set<LogPtr>;
+    using Sink = spdlog::sinks::sink;
+    using SinkPtr = std::shared_ptr<Sink>;
 
     // ─────── LOGGERS NAME ─────────
 public:
