@@ -4,6 +4,6 @@
 #include <Stringify/Version.hpp>
 #include <Stringify/Utils.hpp>
 #include <Stringify/VersionRegex.hpp>
-#include <Stringify/AddressRegex.hpp>
+#include <Stringify/Network.hpp>
 
 #endif

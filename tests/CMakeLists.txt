@@ -9,14 +9,16 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 set_target_properties(gtest gtest_main gmock gmock_main
-    PROPERTIES FOLDER Dependencies/gtest)
+  PROPERTIES FOLDER Dependencies/gtest)
 
 set(STRINGIFY_TEST_TARGET ${STRINGIFY_TESTS_PREFIX}Tests)
 
 set(STRINGIFY_TEST_TARGET_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(STRINGIFY_TEST_SRCS  ${STRINGIFY_TEST_TARGET_DIR}/Tests.cpp
-    )
+set(STRINGIFY_TEST_SRCS
+  ${STRINGIFY_TEST_TARGET_DIR}/Tests.cpp
+  ${STRINGIFY_TEST_TARGET_DIR}/NetworkTests.cpp
+  )
 
 message(STATUS "Add Test: ${STRINGIFY_TEST_TARGET}")
 
