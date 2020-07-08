@@ -37,6 +37,10 @@ set(STRINGIFY_VERSION ${STRINGIFY_VERSION_MAJOR}.${STRINGIFY_VERSION_MINOR}.${ST
 set(STRINGIFY_PROJECT "Stringify" CACHE STRING "Project Name")
 set(STRINGIFY_TARGET ${STRINGIFY_PROJECT} CACHE STRING "Stringify library name")
 set(STRINGIFY_VERSION ${STRINGIFY_VERSION_MAJOR}.${STRINGIFY_VERSION_MINOR}.${STRINGIFY_VERSION_PATCH} CACHE STRING "Stringify current version, this is only decorative and will not configure any files" FORCE)
+set(STRINGIFY_ENABLE_PCH ON CACHE BOOL
+ "Enable precompile headers support for 'Qaterial'. \"
+ Only work if CMake support 'target_precompile_headers'. \"
+ This can speed up compilation time.")
 
 set(STRINGIFY_BUILD_SHARED OFF CACHE BOOL "Build as a shared library (ON) or as static (OFF)")
 set(STRINGIFY_FOLDER_PREFIX ${STRINGIFY_PROJECT} CACHE STRING "Prefix folder for all Stringify generated targets in generated project (only decorative)")
@@ -61,6 +65,7 @@ message(STATUS "STRINGIFY_VERSION            : " ${STRINGIFY_VERSION})
 message(STATUS "STRINGIFY_VERSION_TAG        : " ${STRINGIFY_VERSION_TAG})
 message(STATUS "STRINGIFY_BUILD_SHARED       : " ${STRINGIFY_BUILD_SHARED})
 message(STATUS "STRINGIFY_FOLDER_PREFIX      : " ${STRINGIFY_FOLDER_PREFIX})
+message(STATUS "STRINGIFY_ENABLE_PCH         : " ${STRINGIFY_ENABLE_PCH})
 
 # Tests
 message(STATUS "STRINGIFY_ENABLE_TESTS       : " ${STRINGIFY_ENABLE_TESTS})
@@ -177,6 +182,9 @@ target_compile_features(${STRINGIFY_TARGET} PUBLIC cxx_std_11)
 target_include_directories(${STRINGIFY_TARGET} PUBLIC $<BUILD_INTERFACE:${STRINGIFY_INCS_FOLDER}> $<INSTALL_INTERFACE:${STRINGIFY_INSTALL_PREFIX}>)
 
 # Link libraries
+if(STRINGIFY_ENABLE_PCH AND COMMAND target_precompile_headers)
+  target_precompile_headers(${STRINGIFY_TARGET} PRIVATE include/Stringify/Pch/Pch.hpp)
+endif()
 target_link_libraries(${STRINGIFY_TARGET} spdlog Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick)
 
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE AUTORCC TRUE)

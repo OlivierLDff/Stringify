@@ -33,7 +33,7 @@ jobs:
       - name: Configure Stringify
         run: |
           mkdir -p build
-          cmake -DNETREP_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" -B build -S .
+          cmake -DSTRINGIFY_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" -B build -S .
         shell: bash
 
       - name: Build Stringify

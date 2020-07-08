@@ -22,5 +22,9 @@ target_link_libraries(${STRINGIFY_TEST_TARGET} ${STRINGIFY_TARGET})
 target_link_libraries(${STRINGIFY_TEST_TARGET} gtest gmock)
 set_target_properties(${STRINGIFY_TEST_TARGET} PROPERTIES FOLDER ${STRINGIFY_FOLDER_PREFIX}/Tests)
 
+if(STRINGIFY_ENABLE_PCH AND COMMAND target_precompile_headers)
+  target_precompile_headers(${STRINGIFY_TEST_TARGET} PRIVATE ../include/Stringify/Pch/Pch.hpp)
+endif()
+
 # Register the test
 add_test(NAME ${STRINGIFY_TEST_TARGET} COMMAND ${STRINGIFY_TEST_TARGET})
