@@ -10,14 +10,6 @@
 
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-# DEPENDENCIES
-
-set(SPDLOG_REPOSITORY "https://github.com/gabime/spdlog" CACHE STRING "Repository of spdlog")
-set(SPDLOG_TAG "v1.x" CACHE STRING "Git tag/branch of spdlog")
-
-set(GTEST_REPOSITORY "https://github.com/google/googletest" CACHE STRING "Repository of googletest")
-set(GTEST_TAG "master" CACHE STRING "Git tag/branch of googletest")
-
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       PROJECT SETTINGS                           │
 # └──────────────────────────────────────────────────────────────────┘
@@ -45,6 +37,10 @@ set(STRINGIFY_VERSION ${STRINGIFY_VERSION_MAJOR}.${STRINGIFY_VERSION_MINOR}.${ST
 set(STRINGIFY_PROJECT "Stringify" CACHE STRING "Project Name")
 set(STRINGIFY_TARGET ${STRINGIFY_PROJECT} CACHE STRING "Stringify library name")
 set(STRINGIFY_VERSION ${STRINGIFY_VERSION_MAJOR}.${STRINGIFY_VERSION_MINOR}.${STRINGIFY_VERSION_PATCH} CACHE STRING "Stringify current version, this is only decorative and will not configure any files" FORCE)
+set(STRINGIFY_ENABLE_PCH ON CACHE BOOL
+ "Enable precompile headers support for 'Qaterial'. \"
+ Only work if CMake support 'target_precompile_headers'. \"
+ This can speed up compilation time.")
 
 set(STRINGIFY_BUILD_SHARED OFF CACHE BOOL "Build as a shared library (ON) or as static (OFF)")
 set(STRINGIFY_FOLDER_PREFIX ${STRINGIFY_PROJECT} CACHE STRING "Prefix folder for all Stringify generated targets in generated project (only decorative)")
@@ -69,6 +65,7 @@ message(STATUS "STRINGIFY_VERSION            : " ${STRINGIFY_VERSION})
 message(STATUS "STRINGIFY_VERSION_TAG        : " ${STRINGIFY_VERSION_TAG})
 message(STATUS "STRINGIFY_BUILD_SHARED       : " ${STRINGIFY_BUILD_SHARED})
 message(STATUS "STRINGIFY_FOLDER_PREFIX      : " ${STRINGIFY_FOLDER_PREFIX})
+message(STATUS "STRINGIFY_ENABLE_PCH         : " ${STRINGIFY_ENABLE_PCH})
 
 # Tests
 message(STATUS "STRINGIFY_ENABLE_TESTS       : " ${STRINGIFY_ENABLE_TESTS})
@@ -79,37 +76,19 @@ endif(STRINGIFY_ENABLE_TESTS)
 message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
 
 # ┌──────────────────────────────────────────────────────────────────┐
-# │                         QT5 CMAKE                                │
-# └──────────────────────────────────────────────────────────────────┘
-
-find_package(Qt5Core            CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
-find_package(Qt5Qml             CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
-
-find_package(Qt5Gui             CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
-find_package(Qt5Quick           CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
-find_package(Qt5QuickCompiler   CONFIG REQUIRED NO_CMAKE_SYSTEM_PATH)
-
-# ┌──────────────────────────────────────────────────────────────────┐
 # │                       DEPENDENCIES                               │
 # └──────────────────────────────────────────────────────────────────┘
 
-include(FetchContent)
-
-# googletest
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY ${GTEST_REPOSITORY}
-    GIT_TAG        ${GTEST_TAG}
+find_package(Qt5 REQUIRED COMPONENTS
+  Core
+  Gui
+  Qml
+  Quick
+  QuickControls2
+  QuickCompiler
 )
 
-# spdlog
-FetchContent_Declare(
-    spdlog
-    GIT_REPOSITORY ${SPDLOG_REPOSITORY}
-    GIT_TAG        ${SPDLOG_TAG}
-)
-
-FetchContent_MakeAvailable(spdlog)
+include(cmake/FetchSpdlog.cmake)
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                          STRINGIFY                               │
@@ -130,7 +109,7 @@ qtquick_compiler_add_resources(STRINGIFY_QML_RES ${CMAKE_CURRENT_SOURCE_DIR}/qml
 # Trick to rerun cmake each time Stringify.qrc is updated
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc
-  ${CMAKE_CURRENT_BINARY_DIR}/qml.junk
+  ${CMAKE_CURRENT_BINARY_DIR}/Stringify.qrc.junk
 )
 
 # Dont Run Moc on cpp file generated from qml
@@ -203,12 +182,12 @@ target_compile_features(${STRINGIFY_TARGET} PUBLIC cxx_std_11)
 target_include_directories(${STRINGIFY_TARGET} PUBLIC $<BUILD_INTERFACE:${STRINGIFY_INCS_FOLDER}> $<INSTALL_INTERFACE:${STRINGIFY_INSTALL_PREFIX}>)
 
 # Link libraries
-target_link_libraries(${STRINGIFY_TARGET} spdlog)
+if(STRINGIFY_ENABLE_PCH AND COMMAND target_precompile_headers)
+  target_precompile_headers(${STRINGIFY_TARGET} PRIVATE include/Stringify/Pch/Pch.hpp)
+endif()
+target_link_libraries(${STRINGIFY_TARGET} spdlog Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick)
 
-set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE)
-set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTORCC TRUE)
-qt5_use_modules(${STRINGIFY_TARGET} Core Gui Qml Quick)
-
+set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE AUTORCC TRUE)
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES FOLDER ${STRINGIFY_FOLDER_PREFIX})
 
 # Version
@@ -223,6 +202,7 @@ target_compile_definitions(${STRINGIFY_TARGET} PRIVATE -DSTRINGIFY_VERSION_TAG_H
 # └──────────────────────────────────────────────────────────────────┘
 
 if(STRINGIFY_ENABLE_TESTS)
+    include(cmake/FetchGTest.cmake)
     enable_testing()
     add_subdirectory(tests)
 endif()
