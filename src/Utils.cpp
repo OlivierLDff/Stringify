@@ -84,9 +84,9 @@ Q_COREAPP_STARTUP_FUNCTION(Stringify_loadResources);
 
 using namespace stringify;
 
-void Utils::registerTypes(const char* uri, const quint8 major, const quint8 minor)
+void stringify::registerQmlTypes(const char* uri, const quint8 major, const quint8 minor)
 {
     ::Stringify_registerTypes(uri, major, minor);
 }
 
-void Utils::loadResources() { ::Stringify_loadResources(); }
+void stringify::loadQmlResources() { ::Stringify_loadResources(); }
