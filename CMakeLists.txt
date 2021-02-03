@@ -41,6 +41,7 @@ set(STRINGIFY_ENABLE_PCH ON CACHE BOOL
  "Enable precompile headers support for 'Qaterial'. \"
  Only work if CMake support 'target_precompile_headers'. \"
  This can speed up compilation time.")
+set(STRINGIFY_ENABLE_QML ON CACHE STRING "Build Support for Qml. Stringify.Validitor & Stringify.Formatter")
 
 set(STRINGIFY_BUILD_SHARED OFF CACHE BOOL "Build as a shared library (ON) or as static (OFF)")
 set(STRINGIFY_FOLDER_PREFIX ${STRINGIFY_PROJECT} CACHE STRING "Prefix folder for all Stringify generated targets in generated project (only decorative)")
@@ -81,12 +82,17 @@ message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
 
 find_package(Qt5 REQUIRED COMPONENTS
   Core
-  Gui
   Qml
-  Quick
-  QuickControls2
-  QuickCompiler
 )
+
+if(STRINGIFY_ENABLE_QML)
+  find_package(Qt5 REQUIRED COMPONENTS
+    Qml
+    Quick
+    QuickControls2
+    QuickCompiler
+  )
+endif()
 
 include(cmake/FetchSpdlog.cmake)
 
@@ -94,29 +100,33 @@ include(cmake/FetchSpdlog.cmake)
 # │                          STRINGIFY                               │
 # └──────────────────────────────────────────────────────────────────┘
 
-file(GLOB_RECURSE STRINGIFY_QML_SRCS qml/*.qml)
+if(STRINGIFY_ENABLE_QML)
 
-foreach(SOURCE IN ITEMS ${STRINGIFY_QML_SRCS})
-    get_filename_component(SOURCE_PATH "${SOURCE}" PATH)
-    file(RELATIVE_PATH SOURCE_PATH_REL ${CMAKE_CURRENT_SOURCE_DIR}/qml "${SOURCE_PATH}")
-    string(REPLACE "/" "\\" GROUP_PATH "${SOURCE_PATH_REL}")
-    source_group("Qml\\${GROUP_PATH}" FILES "${SOURCE}")
-endforeach()
+  file(GLOB_RECURSE STRINGIFY_QML_SRCS qml/*.qml)
 
-# Add qml to the qtquick compiler
-qtquick_compiler_add_resources(STRINGIFY_QML_RES ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc)
+  foreach(SOURCE IN ITEMS ${STRINGIFY_QML_SRCS})
+      get_filename_component(SOURCE_PATH "${SOURCE}" PATH)
+      file(RELATIVE_PATH SOURCE_PATH_REL ${CMAKE_CURRENT_SOURCE_DIR}/qml "${SOURCE_PATH}")
+      string(REPLACE "/" "\\" GROUP_PATH "${SOURCE_PATH_REL}")
+      source_group("Qml\\${GROUP_PATH}" FILES "${SOURCE}")
+  endforeach()
 
-# Trick to rerun cmake each time Stringify.qrc is updated
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc
-  ${CMAKE_CURRENT_BINARY_DIR}/Stringify.qrc.junk
-)
+  # Add qml to the qtquick compiler
+  qtquick_compiler_add_resources(STRINGIFY_QML_RES ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc)
 
-# Dont Run Moc on cpp file generated from qml
-foreach(STRINGIFY_CURRENT_QML_FILE ${STRINGIFY_QML_RES})
-    set_property(SOURCE ${STRINGIFY_CURRENT_QML_FILE} PROPERTY SKIP_AUTOMOC ON)
-    source_group("Qml\\QtQuickCompiler Files" FILES ${STRINGIFY_CURRENT_QML_FILE})
-endforeach()
+  # Trick to rerun cmake each time Stringify.qrc is updated
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/qml/Stringify.qrc
+    ${CMAKE_CURRENT_BINARY_DIR}/Stringify.qrc.junk
+  )
+
+  # Dont Run Moc on cpp file generated from qml
+  foreach(STRINGIFY_CURRENT_QML_FILE ${STRINGIFY_QML_RES})
+      set_property(SOURCE ${STRINGIFY_CURRENT_QML_FILE} PROPERTY SKIP_AUTOMOC ON)
+      source_group("Qml\\QtQuickCompiler Files" FILES ${STRINGIFY_CURRENT_QML_FILE})
+  endforeach()
+
+endif()
 
 set(STRINGIFY_SRCS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(STRINGIFY_INCS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -185,9 +195,15 @@ target_include_directories(${STRINGIFY_TARGET} PUBLIC $<BUILD_INTERFACE:${STRING
 if(STRINGIFY_ENABLE_PCH AND COMMAND target_precompile_headers)
   target_precompile_headers(${STRINGIFY_TARGET} PRIVATE include/Stringify/Pch/Pch.hpp)
 endif()
-target_link_libraries(${STRINGIFY_TARGET} spdlog Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick)
+target_link_libraries(${STRINGIFY_TARGET} PUBLIC spdlog Qt::Core Qt::Qml)
+set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE)
 
-set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTOMOC TRUE AUTORCC TRUE)
+if(STRINGIFY_ENABLE_QML)
+  target_link_libraries(${STRINGIFY_TARGET} PUBLIC Qt::Gui Qt::Quick)
+  set_target_properties(${STRINGIFY_TARGET} PROPERTIES AUTORCC TRUE)
+  target_compile_definitions(${STRINGIFY_TARGET} PRIVATE -DSTRINGIFY_ENABLE_QML)
+endif()
+
 set_target_properties(${STRINGIFY_TARGET} PROPERTIES FOLDER ${STRINGIFY_FOLDER_PREFIX})
 
 # Version
